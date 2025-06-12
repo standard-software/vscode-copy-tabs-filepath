@@ -24,6 +24,18 @@ function activate(context) {
 		vscode.window.showInformationMessage('Hello World from vscode-copy-tabs-filepath!');
 	});
 
+	const copyFilePathDisposable = vscode.commands.registerCommand('vscode-copy-tabs-filepath.copyFilePath', function () {
+		const activeEditor = vscode.window.activeTextEditor;
+		if (activeEditor) {
+			const filePath = activeEditor.document.uri.fsPath;
+			vscode.env.clipboard.writeText(filePath);
+			vscode.window.showInformationMessage('Copied file path: ' + filePath);
+		} else {
+			vscode.window.showWarningMessage('No active editor');
+		}
+	});
+	context.subscriptions.push(copyFilePathDisposable);
+
 	context.subscriptions.push(disposable);
 }
 

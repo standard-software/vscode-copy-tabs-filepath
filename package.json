@@ -13,9 +13,21 @@
   "main": "./src/extension.js",
   "contributes": {
     "commands": [{
-      "command": "vscode-copy-tabs-filepath.helloWorld",
-      "title": "vscode-copy-tabs-filepath"
-    }]
+        "command": "vscode-copy-tabs-filepath.helloWorld",
+        "title": "vscode-copy-tabs-filepath"
+      },
+      {
+        "command": "vscode-copy-tabs-filepath.copyFilePath",
+        "title": "vscode-copy-tabs-filepath.copyFilePath"
+      }
+    ],
+    "menus": {
+      "editor/title/context": [{
+        "command": "vscode-copy-tabs-filepath.copyFilePath",
+        "when": "resourceLangId != ''",
+        "group": "navigation@100"
+      }]
+    }
   },
   "scripts": {
     "lint": "eslint .",
