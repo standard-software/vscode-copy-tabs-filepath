@@ -24,17 +24,30 @@ function activate(context) {
 		vscode.window.showInformationMessage('Hello World from vscode-copy-tabs-filepath!');
 	});
 
-	const copyFilePathDisposable = vscode.commands.registerCommand('vscode-copy-tabs-filepath.copyFilePath', function () {
+	// Show QuickPick with two options in English
+	const showCopyOptionsDisposable = vscode.commands.registerCommand('vscode-copy-tabs-filepath.copyFilePath', async function () {
+		const options = [
+			{ label: 'Copy Path', value: 'path' },
+			{ label: 'Copy Filename', value: 'name' }
+		];
+		const selected = await vscode.window.showQuickPick(options, { placeHolder: 'Select what to copy' });
+		if (!selected) return;
 		const activeEditor = vscode.window.activeTextEditor;
-		if (activeEditor) {
+		if (!activeEditor) {
+			vscode.window.showWarningMessage('No active editor');
+			return;
+		}
+		if (selected.value === 'path') {
 			const filePath = activeEditor.document.uri.fsPath;
 			vscode.env.clipboard.writeText(filePath);
 			vscode.window.showInformationMessage('Copied file path: ' + filePath);
-		} else {
-			vscode.window.showWarningMessage('No active editor');
+		} else if (selected.value === 'name') {
+			const fileName = activeEditor.document.uri.fsPath.split(/[/\\]/).pop();
+			vscode.env.clipboard.writeText(fileName);
+			vscode.window.showInformationMessage('Copied file name: ' + fileName);
 		}
 	});
-	context.subscriptions.push(copyFilePathDisposable);
+	context.subscriptions.push(showCopyOptionsDisposable);
 
 	context.subscriptions.push(disposable);
 }
