@@ -10,11 +10,11 @@
     "Other"
   ],
   "activationEvents": [],
-  "main": "./extension.js",
+  "main": "./src/extension.js",
   "contributes": {
     "commands": [{
       "command": "vscode-copy-tabs-filepath.helloWorld",
-      "title": "Hello World"
+      "title": "vscode-copy-tabs-filepath"
     }]
   },
   "scripts": {
