@@ -14,10 +14,6 @@
   "contributes": {
     "commands": [
       {
-        "command": "vscode-copy-tabs-filepath.helloWorld",
-        "title": "vscode-copy-tabs-filepath"
-      },
-      {
         "command": "vscode-copy-tabs-filepath.copyFilePath",
         "title": "copy file info"
       }
