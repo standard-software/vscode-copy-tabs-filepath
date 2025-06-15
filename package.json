@@ -2,7 +2,7 @@
   "name": "vscode-copy-tabs-filepath",
   "displayName": "vscode-copy-tabs-filepath",
   "description": "",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "engines": {
     "vscode": "^1.100.0"
   },
@@ -11,34 +11,29 @@
   ],
   "activationEvents": [],
   "main": "./src/extension.js",
+  "scripts": {
+    "lint": "eslint --fix ./src",
+    "pack": "npx -y vsce package && code --install-extension vscode-copy-tabs-filepath-0.1.0.vsix",
+    "": ""
+  },
   "contributes": {
     "commands": [
       {
-        "command": "vscode-copy-tabs-filepath.copyFilePath",
-        "title": "copy file info"
+        "command": "vscode-copy-tabs-filepath.copyTabsFilePath",
+        "title": "Copy Tabs FilePath"
       }
     ],
     "menus": {
       "editor/title/context": [
         {
-          "command": "vscode-copy-tabs-filepath.copyFilePath",
+          "command": "vscode-copy-tabs-filepath.copyTabsFilePath",
           "when": "resourceLangId != ''",
           "group": "navigation@100"
         }
       ]
     }
   },
-  "scripts": {
-    "lint": "eslint .",
-    "pretest": "npm run lint",
-    "test": "vscode-test"
-  },
   "devDependencies": {
-    "@types/vscode": "^1.100.0",
-    "@types/mocha": "^10.0.10",
-    "@types/node": "20.x",
-    "eslint": "^9.25.1",
-    "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.5.2"
+    "eslint": "^9.25.1"
   }
 }
