@@ -27,7 +27,7 @@ const getTabRelativePath = (tab) => {
     workspaceFolder
       ? path.relative(
         workspaceFolder.uri.fsPath,
-        editor.document.uri.fsPath
+        filePath
       )
       : filePath;
 
@@ -43,7 +43,7 @@ const getTabProjectRelativePathSlash = (tab) => {
     workspaceFolder
       ? path.relative(
         path.dirname(workspaceFolder.uri.fsPath),
-        editor.document.uri.fsPath
+        filePath
       )
       : filePath;
 
@@ -87,9 +87,9 @@ const copyFileName = (tabsGroups) => {
   for (const tabs of tabsGroups) {
     const paths = [];
     for (const tab of tabs) {
-      const fileName = getTabFileName(tab);
-      if (fileName !== '') {
-        paths.push(fileName);
+      const path = getTabFileName(tab);
+      if (path !== '') {
+        paths.push(path);
       }
     }
     pathsGroups.push(paths);
@@ -102,9 +102,9 @@ const copyFileNameWithoutExt = (tabsGroups) => {
   for (const tabs of tabsGroups) {
     const paths = [];
     for (const tab of tabs) {
-      const fileName = getTabFileNameWithoutExt(tab);
-      if (fileName !== '') {
-        paths.push(fileName);
+      const path = getTabFileNameWithoutExt(tab);
+      if (path !== '') {
+        paths.push(path);
       }
     }
     pathsGroups.push(paths);
@@ -117,9 +117,9 @@ const copyRelativePath = (tabsGroups) => {
   for (const tabs of tabsGroups) {
     const paths = [];
     for (const tab of tabs) {
-      const fileName = getTabRelativePath(tab);
-      if (fileName !== '') {
-        paths.push(fileName);
+      const path = getTabRelativePath(tab);
+      if (path !== '') {
+        paths.push(path);
       }
     }
     pathsGroups.push(paths);
@@ -132,9 +132,9 @@ const copyProjectRelativePath = (tabsGroups) => {
   for (const tabs of tabsGroups) {
     const paths = [];
     for (const tab of tabs) {
-      const fileName = getTabProjectRelativePathSlash(tab);
-      if (fileName !== '') {
-        paths.push(fileName);
+      const path = getTabProjectRelativePathSlash(tab);
+      if (path !== '') {
+        paths.push(path);
       }
     }
     pathsGroups.push(paths);
@@ -147,9 +147,9 @@ const copyFullPath = (tabsGroups) => {
   for (const tabs of tabsGroups) {
     const paths = [];
     for (const tab of tabs) {
-      const fileName = getTabFilePath(tab);
-      if (fileName !== '') {
-        paths.push(fileName);
+      const path = getTabFilePath(tab);
+      if (path !== '') {
+        paths.push(path);
       }
     }
     pathsGroups.push(paths);

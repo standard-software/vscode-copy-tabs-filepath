@@ -1,65 +1,54 @@
-# vscode-copy-tabs-filepath README
+# Copy Tabs FilePath
 
-This is the README for your extension "vscode-copy-tabs-filepath". After writing up a brief description, we recommend including the following sections.
+[![](https://vsmarketplacebadges.dev/version-short/SatoshiYamamoto.vscode-copy-tabs-filepath.png)](https://marketplace.visualstudio.com/items?itemName=SatoshiYamamoto.vscode-copy-tabs-filepath)
+[![](https://vsmarketplacebadges.dev/installs-short/SatoshiYamamoto.vscode-copy-tabs-filepath.png)](https://marketplace.visualstudio.com/items?itemName=SatoshiYamamoto.vscode-copy-tabs-filepath)
+[![](https://vsmarketplacebadges.dev/rating-short/SatoshiYamamoto.vscode-copy-tabs-filepath.png)](https://marketplace.visualstudio.com/items?itemName=SatoshiYamamoto.vscode-copy-tabs-filepath)
+[![](https://img.shields.io/github/license/standard-software/vscode-copy-tabs-filepath.png)](https://github.com/standard-software/vscode-copy-tabs-filepath/blob/main/LICENSE)
+
+This extension allows you to copy the file paths or file names of all open tabs in VSCode to the clipboard at once.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- Copy the file paths of all or active tabs at once
+- Copy file names only, full paths, or relative paths
+- Supports copying from multiple selected tabs (VSCode tab group support)
 
-For example if there is an image subfolder under your extension project workspace:
+## Installation
 
-\!\[feature X\]\(images/feature-x.png\)
+[Visual Studio Marketplace - Copy Tabs FilePath](https://marketplace.visualstudio.com/items?itemName=SatoshiYamamoto.vscode-copy-tabs-filepath)
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## GitHub
 
-## Requirements
+[standard-software/vscode-copy-tabs-filepath](https://github.com/standard-software/vscode-copy-tabs-filepath)
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+## Usage
 
-## Extension Settings
+Open the command palette (`Ctrl+Shift+P`) and type  
+`Copy Tabs FilePath : ...`  
+Select the desired command.
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+### Example Commands
 
-For example:
+- Copy Tabs FilePath : Copy All Tabs FilePath
+- Copy Tabs FilePath : Copy All Tabs FileName
+- Copy Tabs FilePath : Copy Active Tab FilePath
 
-This extension contributes the following settings:
+More copy formats will be added in the future.
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+## Settings
 
-## Known Issues
+No special settings are required at this time.
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+## Support / Contact
 
-## Release Notes
+For requests or bug reports, please contact via GitHub Issues or email.
 
-Users appreciate release notes as you update your extension.
+Satoshi Yamamoto  
+standard.software.net@gmail.com  
+Japanese / English
 
-### 1.0.0
+## License
 
-Initial release of ...
-
-### 1.0.1
-
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+MIT License
 
 ---
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code.  Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux)
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux)
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
