@@ -1,132 +1,236 @@
 const vscode = require('vscode');
+const path = require(`path`);
 
 const {
   registerCommand,
   commandQuickPick,
 } = require(`./lib/libVSCode.js`);
 
-function getTabFilePath(tab) {
-  if (tab.input && tab.input.uri) {
-    return tab.input.uri.fsPath;
+const driveLetterUpper = path => {
+  if (path[1] === `:`) {
+    return path[0].toUpperCase() + path.slice(1);
   }
-  return undefined;
+  return path;
+};
+
+const getTabFilePath = (tab) => {
+  const path = tab.input?.uri?.fsPath ?? '';
+  return driveLetterUpper(path);
 }
 
-function getTabFileName(tab) {
-  const path = getTabFilePath(tab);
-  if (!path) return undefined;
-  return path.split(/[/\\]/).pop();
+const getTabRelativePath = (tab) => {
+  const filePath = getTabFilePath(tab);
+
+  const editor = vscode.window.activeTextEditor;
+  const workspaceFolder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
+  const filePathRelative =
+    workspaceFolder
+      ? path.relative(
+        workspaceFolder.uri.fsPath,
+        editor.document.uri.fsPath
+      )
+      : filePath;
+
+  return filePathRelative;
 }
 
-function getTabsToLeft(tabs, activeIndex) {
-  return tabs.slice(0, activeIndex + 1);
+const getTabProjectRelativePathSlash = (tab) => {
+  const filePath = getTabFilePath(tab);
+
+  const editor = vscode.window.activeTextEditor;
+  const workspaceFolder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
+  const filePathRelativeProject =
+    workspaceFolder
+      ? path.relative(
+        path.dirname(workspaceFolder.uri.fsPath),
+        editor.document.uri.fsPath
+      )
+      : filePath;
+
+  return filePathRelativeProject.replaceAll(`\\`, `/`);
 }
 
-function getTabsToRight(tabs, activeIndex) {
+const getTabFileName = (tab) => {
+  const filePath = getTabFilePath(tab);
+  const fileName = path.basename(filePath);
+  return fileName ?? '';
+}
+
+const getTabFileNameWithoutExt = (tab) => {
+  const filePath = getTabFilePath(tab);
+  const fileName = path.basename(filePath, path.extname(filePath));
+  return fileName ?? '';
+}
+
+// const getTabsToLeft =(tabs, activeIndex) => {
+//   return tabs.slice(0, activeIndex + 1);
+// }
+
+const getTabsToRight =(tabs, activeIndex) => {
   return tabs.slice(activeIndex);
 }
 
-const copyFileName = (tabsGroups) => {
-  const result = tabsGroups
-    .map(tabs => tabs.map(getTabFileName).filter(Boolean).join('\n'))
-    .join('\n\n');
+const copyTextAndShowMessage = (pathsGroups, text) => {
+  const result = pathsGroups.map(paths => paths.join('\n')).join('\n\n');
+  const pathCount = pathsGroups.flat().length;
 
-  if (result) {
+  if (result !== '') {
     vscode.env.clipboard.writeText(result);
-    vscode.window.showInformationMessage('Copied: ' + result.split('\n').slice(0, 3).join(', ') + (result.includes('\n') ? ' ...' : ''));
+    vscode.window.showInformationMessage(`Copied: ${text}${pathCount > 1 ? 's' : ''}: ${pathCount}`);
   } else {
     vscode.window.showWarningMessage('No filenames to copy.');
   }
 }
 
-const copyFilePath = (tabsGroups) => {
-  const result = tabsGroups
-    .map(tabs => tabs.map(getTabFilePath).filter(Boolean).join('\n'))
-    .join('\n\n');
-
-  if (result) {
-    vscode.env.clipboard.writeText(result);
-    vscode.window.showInformationMessage('Copied: ' + result.split('\n').slice(0, 3).join(', ') + (result.includes('\n') ? ' ...' : ''));
-  } else {
-    vscode.window.showWarningMessage('No file paths to copy.');
+const copyFileName = (tabsGroups) => {
+  const pathsGroups = [];
+  for (const tabs of tabsGroups) {
+    const paths = [];
+    for (const tab of tabs) {
+      const fileName = getTabFileName(tab);
+      if (fileName !== '') {
+        paths.push(fileName);
+      }
+    }
+    pathsGroups.push(paths);
   }
+  copyTextAndShowMessage(pathsGroups, 'file name');
+}
+
+const copyFileNameWithoutExt = (tabsGroups) => {
+  const pathsGroups = [];
+  for (const tabs of tabsGroups) {
+    const paths = [];
+    for (const tab of tabs) {
+      const fileName = getTabFileNameWithoutExt(tab);
+      if (fileName !== '') {
+        paths.push(fileName);
+      }
+    }
+    pathsGroups.push(paths);
+  }
+  copyTextAndShowMessage(pathsGroups, 'file name');
+}
+
+const copyRelativePath = (tabsGroups) => {
+  const pathsGroups = [];
+  for (const tabs of tabsGroups) {
+    const paths = [];
+    for (const tab of tabs) {
+      const fileName = getTabRelativePath(tab);
+      if (fileName !== '') {
+        paths.push(fileName);
+      }
+    }
+    pathsGroups.push(paths);
+  }
+  copyTextAndShowMessage(pathsGroups, 'relative path');
+}
+
+const copyProjectRelativePath = (tabsGroups) => {
+  const pathsGroups = [];
+  for (const tabs of tabsGroups) {
+    const paths = [];
+    for (const tab of tabs) {
+      const fileName = getTabProjectRelativePathSlash(tab);
+      if (fileName !== '') {
+        paths.push(fileName);
+      }
+    }
+    pathsGroups.push(paths);
+  }
+  copyTextAndShowMessage(pathsGroups, 'project relative path');
+}
+
+const copyFullPath = (tabsGroups) => {
+  const pathsGroups = [];
+  for (const tabs of tabsGroups) {
+    const paths = [];
+    for (const tab of tabs) {
+      const fileName = getTabFilePath(tab);
+      if (fileName !== '') {
+        paths.push(fileName);
+      }
+    }
+    pathsGroups.push(paths);
+  }
+  copyTextAndShowMessage(pathsGroups, 'file path');
 }
 
 function activate(context) {
-  registerCommand(context, 'vscode-copy-tabs-filepath.copyFilePath', async function () {
+  registerCommand(context, 'vscode-copy-tabs-filepath.copyTabsFilePath', async () => {
     const activeGroup = vscode.window.tabGroups.activeTabGroup;
     const activeIndex = activeGroup.tabs.findIndex(tab => tab.isActive);
+
+    const tabsToRight = getTabsToRight(activeGroup.tabs, activeIndex);
+    const allTabsAllGroups = vscode.window.tabGroups.all.map(group => group.tabs);
 
     const options = [
       { label: 'Active Tab', kind: vscode.QuickPickItemKind.Separator },
       {
-        label: 'Copy Path',
-        func: () => {
-          copyFilePath([[activeGroup.activeTab]]);
-        }
+        label: 'Active Tab : Copy file name',
+        func: () => { copyFileName([[activeGroup.activeTab]]) },
       },
       {
-        label: 'Copy Filename',
-        func: () => {
-          copyFileName([[activeGroup.activeTab]]);
-        }
+        label: 'Active Tab : Copy file name without extension',
+        func: () => { copyFileNameWithoutExt([[activeGroup.activeTab]]) },
+      },
+      {
+        label: 'Active Tab : Copy relative path',
+        func: () => { copyRelativePath([[activeGroup.activeTab]]) },
+      },
+      {
+        label: 'Active Tab : Copy relative path with project root',
+        func: () => { copyProjectRelativePath([[activeGroup.activeTab]]) },
+      },
+      {
+        label: 'Active Tab : Copy file full path',
+        func: () => { copyFullPath([[activeGroup.activeTab]]) },
       },
 
       { label: 'Tabs to Right', kind: vscode.QuickPickItemKind.Separator },
       {
-        label: 'Copy Path',
-        func: () => {
-          copyFilePath([getTabsToRight(activeGroup.tabs, activeIndex)]);
-        }
+        label: 'Tabs to Right : Copy file name',
+        func: () => { copyFileName([tabsToRight]) },
       },
       {
-        label: 'Copy Filename',
-        func: () => {
-          copyFileName([getTabsToRight(activeGroup.tabs, activeIndex)]);
-        }
-      },
-
-      { label: 'Tabs to Left', kind: vscode.QuickPickItemKind.Separator },
-      {
-        label: 'Copy Path',
-        func: () => {
-          copyFilePath([getTabsToLeft(activeGroup.tabs, activeIndex)]);
-        }
+        label: 'Tabs to Right : Copy file name without extension',
+        func: () => { copyFileNameWithoutExt([tabsToRight]) },
       },
       {
-        label: 'Copy Filename',
-        func: () => {
-          copyFileName([getTabsToLeft(activeGroup.tabs, activeIndex)]);
-        }
-      },
-
-      { label: 'All Tabs in Active Group', kind: vscode.QuickPickItemKind.Separator },
-      {
-        label: 'Copy Path',
-        func: () => {
-          copyFilePath([activeGroup.tabs]);
-        }
+        label: 'Tabs to Right : Copy relative path',
+        func: () => { copyRelativePath([tabsToRight]) },
       },
       {
-        label: 'Copy Filename',
-        func: () => {
-          copyFileName([activeGroup.tabs]);
-        }
+        label: 'Tabs to Right : Copy relative path with project root',
+        func: () => { copyProjectRelativePath([tabsToRight]) },
+      },
+      {
+        label: 'Tabs to Right : Copy file full path',
+        func: () => { copyFullPath([tabsToRight]) },
       },
 
       { label: 'All Tabs in All Groups', kind: vscode.QuickPickItemKind.Separator },
       {
-        label: 'Copy Path',
-        func: () => {
-          copyFilePath(vscode.window.tabGroups.all.map(group => group.tabs));
-        }
+        label: 'All Tabs in All Groups : Copy file name',
+        func: () => { copyFileName(allTabsAllGroups) },
       },
       {
-        label: 'Copy Filename',
-        func: () => {
-          copyFileName(vscode.window.tabGroups.all.map(group => group.tabs));
-        }
-      }
+        label: 'All Tabs in All Groups : Copy file name without extension',
+        func: () => { copyFileNameWithoutExt(allTabsAllGroups) },
+      },
+      {
+        label: 'All Tabs in All Groups : Copy relative path',
+        func: () => { copyRelativePath(allTabsAllGroups) },
+      },
+      {
+        label: 'All Tabs in All Groups : Copy relative path with project root',
+        func: () => { copyProjectRelativePath(allTabsAllGroups) },
+      },
+      {
+        label: 'All Tabs in All Groups : Copy file full path',
+        func: () => { copyFullPath(allTabsAllGroups) },
+      },
     ];
 
     commandQuickPick(options, 'Select what to copy');

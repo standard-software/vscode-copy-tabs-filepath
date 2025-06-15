@@ -91,7 +91,6 @@ _matchFormat.reset = () => {
   );
   _matchFormat.add([`float_more`],
     value => value.match(
-      // eslint-disable-next-line max-len
       /^[-|+]?[0-9]*\.[0-9]*$|^[+|-]?[0-9]+$|^[-|+]?[0-9]+\.?[0-9]*([eE][+-]?[0-9]+)?$/,
     ) ? true : false,
   );
