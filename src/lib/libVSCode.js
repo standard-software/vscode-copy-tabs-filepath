@@ -25,16 +25,23 @@ const commandQuickPick = (commands, placeHolder) => {
   //   {label:``, description:``, func: ()=>{}},
   //   {label:``, kind:vscode.QuickPickItemKind.Separator}
   // ]
+
   vscode.window.showQuickPick(
     // eslint-disable-next-line no-unused-vars
-    commands.map(({func, ...command}) => (command)),
+    commands.map(({func, ...command}, index) => ({
+      ...command,
+      index
+    })),
     {
       canPickMany: false,
       placeHolder
     }
   ).then((item) => {
-    if (!item) { return; }
-    commands.find(({label}) => label === item.label).func();
+    if (!item || typeof item.index !== 'number') { return; }
+    const selectedCommand = commands[item.index];
+    if (selectedCommand && selectedCommand.func) {
+      selectedCommand.func();
+    }
   });
 };
 
