@@ -165,72 +165,24 @@ function activate(context) {
     const tabsToRight = getTabsToRight(activeGroup.tabs, activeIndex);
     const allTabsAllGroups = vscode.window.tabGroups.all.map(group => group.tabs);
 
+    const createSubOptions = (tabsGroups, groupName) => {
+      const options = [];
+        options.push({ label: `${groupName} : Copy file name`, func: () => { copyFileName(tabsGroups) } });
+        options.push({ label: `${groupName} : Copy file name without extension`, func: () => { copyFileNameWithoutExt(tabsGroups) } });
+        options.push({ label: `${groupName} : Copy relative path`, func: () => { copyRelativePath(tabsGroups) } });
+        options.push({ label: `${groupName} : Copy relative path slash with project root`, func: () => { copyProjectRelativePath(tabsGroups) } });
+        options.push({ label: `${groupName} : Copy file full path`, func: () => { copyFullPath(tabsGroups) } });
+
+      return options;
+    }
+
     const options = [
       { label: 'Active Tab', kind: vscode.QuickPickItemKind.Separator },
-      {
-        label: 'Active Tab : Copy file name',
-        func: () => { copyFileName([[activeGroup.activeTab]]) },
-      },
-      {
-        label: 'Active Tab : Copy file name without extension',
-        func: () => { copyFileNameWithoutExt([[activeGroup.activeTab]]) },
-      },
-      {
-        label: 'Active Tab : Copy relative path',
-        func: () => { copyRelativePath([[activeGroup.activeTab]]) },
-      },
-      {
-        label: 'Active Tab : Copy relative path with project root',
-        func: () => { copyProjectRelativePath([[activeGroup.activeTab]]) },
-      },
-      {
-        label: 'Active Tab : Copy file full path',
-        func: () => { copyFullPath([[activeGroup.activeTab]]) },
-      },
-
-      { label: 'Tabs to Right', kind: vscode.QuickPickItemKind.Separator },
-      {
-        label: 'Tabs to Right : Copy file name',
-        func: () => { copyFileName([tabsToRight]) },
-      },
-      {
-        label: 'Tabs to Right : Copy file name without extension',
-        func: () => { copyFileNameWithoutExt([tabsToRight]) },
-      },
-      {
-        label: 'Tabs to Right : Copy relative path',
-        func: () => { copyRelativePath([tabsToRight]) },
-      },
-      {
-        label: 'Tabs to Right : Copy relative path with project root',
-        func: () => { copyProjectRelativePath([tabsToRight]) },
-      },
-      {
-        label: 'Tabs to Right : Copy file full path',
-        func: () => { copyFullPath([tabsToRight]) },
-      },
-
+      ...createSubOptions([[activeGroup.activeTab]], 'Active Tab'),
+      { label: 'Tabs to Right of Active Tab', kind: vscode.QuickPickItemKind.Separator },
+      ...createSubOptions([tabsToRight], 'Tabs to Right'),
       { label: 'All Tabs in All Groups', kind: vscode.QuickPickItemKind.Separator },
-      {
-        label: 'All Tabs in All Groups : Copy file name',
-        func: () => { copyFileName(allTabsAllGroups) },
-      },
-      {
-        label: 'All Tabs in All Groups : Copy file name without extension',
-        func: () => { copyFileNameWithoutExt(allTabsAllGroups) },
-      },
-      {
-        label: 'All Tabs in All Groups : Copy relative path',
-        func: () => { copyRelativePath(allTabsAllGroups) },
-      },
-      {
-        label: 'All Tabs in All Groups : Copy relative path with project root',
-        func: () => { copyProjectRelativePath(allTabsAllGroups) },
-      },
-      {
-        label: 'All Tabs in All Groups : Copy file full path',
-        func: () => { copyFullPath(allTabsAllGroups) },
-      },
+      ...createSubOptions(allTabsAllGroups, 'All Tabs'),
     ];
 
     commandQuickPick(options, 'Select what to copy');

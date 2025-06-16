@@ -28,7 +28,7 @@
         {
           "command": "vscode-copy-tabs-filepath.copyTabsFilePath",
           "when": "resourceLangId != ''",
-          "group": "navigation@100"
+          "group": "1_copy@999"
         }
       ]
     }
