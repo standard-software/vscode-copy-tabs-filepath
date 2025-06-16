@@ -1,21 +1,44 @@
 {
   "name": "vscode-copy-tabs-filepath",
-  "displayName": "vscode-copy-tabs-filepath",
+  "displayName": "Copy Tabs FilePath",
   "description": "",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "scripts": {
+    "lint": "eslint",
+    "lintfix": "eslint --fix",
+    "pack": "npx -y vsce package && code --install-extension vscode-copy-tabs-filepath-1.0.0.vsix",
+    "": ""
+  },
+  "icon": "vscode-copy-tabs-filepath_icon.png",
+  "publisher": "SatoshiYamamoto",
+  "author": {
+    "name": "Satoshi Yamamoto",
+    "email": "standard.software.net@gmail.com",
+    "url": "https://www.facebook.com/stndardsoftware"
+  },
+  "license": "MIT",
+  "homepage": "https://github.com/standard-software/vscode-copy-tabs-filepath",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/standard-software/vscode-copy-tabs-filepath"
+  },
+  "bugs": {
+    "url": "https://github.com/standard-software/vscode-copy-tabs-filepath/issues"
+  },
   "engines": {
     "vscode": "^1.100.0"
   },
   "categories": [
     "Other"
   ],
+  "keywords": [
+    "copy",
+    "filename",
+    "filepath",
+    "tabs"
+  ],
   "activationEvents": [],
   "main": "./src/extension.js",
-  "scripts": {
-    "lint": "eslint --fix ./src",
-    "pack": "npx -y vsce package && code --install-extension vscode-copy-tabs-filepath-0.1.0.vsix",
-    "": ""
-  },
   "contributes": {
     "commands": [
       {
