@@ -62,24 +62,53 @@ const tabFileNameWithoutExt = (tab) => {
   return fileName ?? '';
 }
 
-// const getTabsToLeft =(tabs, activeIndex) => {
-//   return tabs.slice(0, activeIndex + 1);
-// }
+const projectRootName = () => {
+  const workspaceFolders = vscode.workspace.workspaceFolders;
+  if (workspaceFolders && workspaceFolders.length > 0) {
+    const workspaceFolder = workspaceFolders[0];
+    return path.basename(workspaceFolder.uri.fsPath);
+  }
+  return '';
+}
+
+const projectFolderNameRootName = () => {
+  const workspaceFolders = vscode.workspace.workspaceFolders;
+  if (workspaceFolders && workspaceFolders.length > 0) {
+    const workspaceFolder = workspaceFolders[0];
+    return path.basename(path.dirname(workspaceFolder.uri.fsPath)) + '/' + path.basename(workspaceFolder.uri.fsPath);
+  }
+  return '';
+}
+
+const projectRootFullPath = () => {
+  const workspaceFolders = vscode.workspace.workspaceFolders;
+  if (workspaceFolders && workspaceFolders.length > 0) {
+    const workspaceFolder = workspaceFolders[0];
+    return driveLetterUpper(workspaceFolder.uri.fsPath);
+  }
+  return '';
+}
 
 const getTabsToRight =(tabs, activeIndex) => {
   return tabs.slice(activeIndex);
 }
 
-const copyTextAndShowMessage = (pathsGroups, text) => {
+const copyAndMessage = (text, successMessage, warningMessage) => {
+  if (text !== '') {
+    vscode.env.clipboard.writeText(text);
+    vscode.window.showInformationMessage(successMessage);
+  } else {
+    vscode.window.showWarningMessage(warningMessage);
+  }
+}
+
+const copyPathsGroups = (pathsGroups, pathTypeText) => {
   const result = pathsGroups.map(paths => paths.join('\n')).join('\n\n');
   const pathCount = pathsGroups.flat().length;
 
-  if (result !== '') {
-    vscode.env.clipboard.writeText(result);
-    vscode.window.showInformationMessage(`Copied: ${text}${pathCount > 1 ? 's' : ''}: ${pathCount}`);
-  } else {
-    vscode.window.showWarningMessage(`No ${text} to copy.`);
-  }
+  copyAndMessage(result,
+    `Copied: ${pathTypeText}${pathCount > 1 ? 's' : ''}: ${pathCount}`,
+    `No ${pathTypeText} to copy.`);
 }
 
 const copyFileName = (tabsGroups) => {
@@ -94,7 +123,7 @@ const copyFileName = (tabsGroups) => {
     }
     pathsGroups.push(paths);
   }
-  copyTextAndShowMessage(pathsGroups, 'file name');
+  copyPathsGroups(pathsGroups, 'file name');
 }
 
 const copyFileNameWithoutExt = (tabsGroups) => {
@@ -109,7 +138,7 @@ const copyFileNameWithoutExt = (tabsGroups) => {
     }
     pathsGroups.push(paths);
   }
-  copyTextAndShowMessage(pathsGroups, 'file name');
+  copyPathsGroups(pathsGroups, 'file name');
 }
 
 const copyRelativePath = (tabsGroups) => {
@@ -124,7 +153,7 @@ const copyRelativePath = (tabsGroups) => {
     }
     pathsGroups.push(paths);
   }
-  copyTextAndShowMessage(pathsGroups, 'relative path');
+  copyPathsGroups(pathsGroups, 'relative path');
 }
 
 const copyProjectRelativePath = (tabsGroups) => {
@@ -139,7 +168,7 @@ const copyProjectRelativePath = (tabsGroups) => {
     }
     pathsGroups.push(paths);
   }
-  copyTextAndShowMessage(pathsGroups, 'project relative path');
+  copyPathsGroups(pathsGroups, 'project relative path');
 }
 
 const copyFullPath = (tabsGroups) => {
@@ -154,7 +183,30 @@ const copyFullPath = (tabsGroups) => {
     }
     pathsGroups.push(paths);
   }
-  copyTextAndShowMessage(pathsGroups, 'file path');
+  copyPathsGroups(pathsGroups, 'file path');
+}
+
+const copyProjectRootName = () => {
+  const folderName = projectRootName();
+
+  copyAndMessage(folderName,
+    `Copied project root folder name: ${folderName}`,
+    'No project root folder found.');
+}
+
+const copyProjectRootFullPath = () => {
+  const fullPath = projectRootFullPath();
+  copyAndMessage(fullPath,
+    `Copied project root full path: ${fullPath}`,
+    'No project root folder found.');
+}
+
+const copyProjectFolderNameRootName = () => {
+  const folderName = projectFolderNameRootName();
+
+  copyAndMessage(folderName,
+    `Copied project folder name and root name: ${folderName}`,
+    'No project folder found.');
 }
 
 function activate(context) {
@@ -183,6 +235,10 @@ function activate(context) {
       ...createSubOptions([tabsToRight], 'Tabs to Right'),
       { label: 'All Tabs in All Groups', kind: vscode.QuickPickItemKind.Separator },
       ...createSubOptions(allTabsAllGroups, 'All Tabs'),
+      { label: 'Project', kind: vscode.QuickPickItemKind.Separator },
+      { label: 'Project : Copy project root name', func: () => { copyProjectRootName() }},
+      { label: 'Project : Copy project folder name and root name', func: () => { copyProjectFolderNameRootName() }},
+      { label: 'Project : Copy project root full path', func: () => { copyProjectRootFullPath() }}
     ];
 
     commandQuickPick(options, 'Select what to copy');
