@@ -4,12 +4,19 @@ All notable changes to the "vscode-copy-tabs-filepath" extension will be documen
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
-## [1.1.0] - 2025-06-17 Tue
+## [1.1.0] - 2025-06-18 Wed
 
 ### Added
-- Project root name copy
-- Project folder name and root name copy
-- Project root full path copy
+- Active Tab context menu
+  - Project root name copy
+  - Project folder name and root name copy
+  - Project root full path copy
+- exploer view context menu
+  - File name only
+  - File name without extension
+  - Relative path from workspace root
+  - Relative path including project root name
+  - Full path
 
 ## [1.0.1] - 2025-06-17
 
@@ -30,4 +37,4 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   - File name without extension
   - Relative path from workspace root
   - Relative path including project root name
-  - Full absolute path
+  - Full path

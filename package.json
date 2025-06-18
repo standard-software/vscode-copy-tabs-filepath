@@ -2,11 +2,11 @@
   "name": "vscode-copy-tabs-filepath",
   "displayName": "Copy Tabs FilePath",
   "description": "",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "scripts": {
     "lint": "eslint",
     "lintfix": "eslint --fix",
-    "pack": "npx -y vsce package && code --install-extension vscode-copy-tabs-filepath-1.0.1.vsix",
+    "pack": "npx -y vsce package && code --install-extension vscode-copy-tabs-filepath-1.1.0.vsix",
     "": ""
   },
   "icon": "vscode-copy-tabs-filepath_icon.png",
@@ -44,6 +44,10 @@
       {
         "command": "vscode-copy-tabs-filepath.copyTabsFilePath",
         "title": "Copy Tabs FilePath"
+      },
+      {
+        "command": "vscode-copy-tabs-filepath.copySelectedFilesPath",
+        "title": "Copy Tabs FilePath"
       }
     ],
     "menus": {
@@ -51,6 +55,13 @@
         {
           "command": "vscode-copy-tabs-filepath.copyTabsFilePath",
           "when": "resourceLangId != ''",
+          "group": "1_copy@999"
+        }
+      ],
+      "explorer/context": [
+        {
+          "command": "vscode-copy-tabs-filepath.copySelectedFilesPath",
+          "when": "explorerResourceIsFolder == false",
           "group": "1_copy@999"
         }
       ]

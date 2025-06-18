@@ -209,6 +209,65 @@ const copyProjectFolderNameRootName = () => {
     'No project folder found.');
 }
 
+// Explorer context functions
+const filePathInfo = (filePath) => {
+  const fullPath = driveLetterUpper(filePath);
+  const fileName = path.basename(fullPath);
+  const fileNameWithoutExt = path.basename(fullPath, path.extname(fullPath));
+
+  const workspaceFolders = vscode.workspace.workspaceFolders;
+  let relativePath = fullPath;
+  let projectRelativePath = fullPath;
+
+  if (workspaceFolders && workspaceFolders.length > 0) {
+    const workspaceFolder = workspaceFolders[0];
+    relativePath = path.relative(workspaceFolder.uri.fsPath, fullPath);
+    projectRelativePath = path.relative(
+      path.dirname(workspaceFolder.uri.fsPath),
+      fullPath
+    ).replaceAll('\\', '/');
+  }
+
+  return {
+    fullPath,
+    fileName,
+    fileNameWithoutExt,
+    relativePath,
+    projectRelativePath
+  };
+};
+
+const copySelectedFilesInfo = (uris, infoType) => {
+  if (!uris || uris.length === 0) {
+    vscode.window.showWarningMessage('No files selected.');
+    return;
+  }
+
+  const paths = [];
+  for (const uri of uris) {
+    const fileInfo = filePathInfo(uri.fsPath);
+    const pathValue = fileInfo[infoType];
+    if (pathValue !== '') {
+      paths.push(pathValue);
+    }
+  }
+
+  const result = paths.join('\n');
+  const pathCount = paths.length;
+
+  if (result !== '') {
+    vscode.env.clipboard.writeText(result);
+    const typeLabel = infoType === 'fullPath' ? 'file path' :
+                     infoType === 'fileName' ? 'file name' :
+                     infoType === 'fileNameWithoutExt' ? 'file name' :
+                     infoType === 'relativePath' ? 'relative path' :
+                     infoType === 'projectRelativePath' ? 'project relative path' : 'file info';
+    vscode.window.showInformationMessage(`Copied: ${typeLabel}${pathCount > 1 ? 's' : ''}: ${pathCount}`);
+  } else {
+    vscode.window.showWarningMessage('No file paths to copy.');
+  }
+};
+
 function activate(context) {
   registerCommand(context, 'vscode-copy-tabs-filepath.copyTabsFilePath', async () => {
     const activeGroup = vscode.window.tabGroups.activeTabGroup;
@@ -242,6 +301,25 @@ function activate(context) {
     ];
 
     commandQuickPick(options, 'Select what to copy');
+  });
+
+  registerCommand(context, 'vscode-copy-tabs-filepath.copySelectedFilesPath', async (selectedFilePath, allSelectedFilePaths) => {
+    const selectedPaths = allSelectedFilePaths && allSelectedFilePaths.length > 0 ? allSelectedFilePaths : [selectedFilePath];
+
+    if (!selectedPaths || selectedPaths.length === 0) {
+      vscode.window.showWarningMessage('No files selected.');
+      return;
+    }
+
+    const options = [
+      { label: 'Copy file name', func: () => { copySelectedFilesInfo(selectedPaths, 'fileName') } },
+      { label: 'Copy file name without extension', func: () => { copySelectedFilesInfo(selectedPaths, 'fileNameWithoutExt') } },
+      { label: 'Copy relative path', func: () => { copySelectedFilesInfo(selectedPaths, 'relativePath') } },
+      { label: 'Copy relative path slash with project root', func: () => { copySelectedFilesInfo(selectedPaths, 'projectRelativePath') } },
+      { label: 'Copy file full path', func: () => { copySelectedFilesInfo(selectedPaths, 'fullPath') } }
+    ];
+
+    commandQuickPick(options, `Select copy format for ${selectedPaths.length} file${selectedPaths.length > 1 ? 's' : ''}`);
   });
 }
 
