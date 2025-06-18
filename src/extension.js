@@ -193,6 +193,12 @@ function activate(context) {
   registerCommand(context, 'vscode-copy-tabs-filepath.editorTitleContextMenu',
     async () => {
       const activeGroup = vscode.window.tabGroups.activeTabGroup;
+
+      if (!activeGroup || !activeGroup.tabs || activeGroup.tabs.length === 0) {
+        vscode.window.showWarningMessage('Copy Tabs FilePath : No active tab group or tabs found.');
+        return;
+      }
+
       const activeIndex = activeGroup.tabs.findIndex(tab => tab.isActive);
 
       const tabsToRight = getTabsToRight(activeGroup.tabs, activeIndex);
