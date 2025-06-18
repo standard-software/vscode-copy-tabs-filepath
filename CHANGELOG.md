@@ -11,12 +11,15 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
   - Project root name copy
   - Project folder name and root name copy
   - Project root full path copy
+
 - exploer view context menu
   - File name only
   - File name without extension
   - Relative path from workspace root
   - Relative path including project root name
   - Full path
+
+- Hide relative paths when no workspace folder is available
 
 ## [1.0.1] - 2025-06-17
 

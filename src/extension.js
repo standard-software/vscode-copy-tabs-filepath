@@ -2,20 +2,27 @@ const vscode = require('vscode');
 const path = require(`path`);
 
 const {
+  isUndefined,
+} = require(`./parts/parts.js`);
+
+const {
   registerCommand,
   commandQuickPick,
 } = require(`./lib/libVSCode.js`);
+
+const getWorkspaceFolderPath = () => {
+  const workspaceFolders = vscode.workspace.workspaceFolders;
+  if (workspaceFolders && workspaceFolders.length > 0) {
+    return workspaceFolders[0].uri.fsPath;
+  }
+  return undefined;
+};
 
 const driveLetterUpper = path => {
   if (path[1] === `:`) {
     return path[0].toUpperCase() + path.slice(1);
   }
   return path;
-};
-
-const hasWorkspaceFolder = () => {
-  const workspaceFolders = vscode.workspace.workspaceFolders;
-  return workspaceFolders && workspaceFolders.length > 0;
 };
 
 const filePathInfo = (filePath) => {
@@ -32,15 +39,13 @@ const filePathInfo = (filePath) => {
   const fileName = path.basename(fullPath);
   const fileNameWithoutExt = path.basename(fullPath, path.extname(fullPath));
 
-  const workspaceFolders = vscode.workspace.workspaceFolders;
   let relativePath = undefined;
   let projectRelativePathSlash = undefined;
-
-  if (hasWorkspaceFolder()) {
-    const workspaceFolder = workspaceFolders[0];
-    relativePath = path.relative(workspaceFolder.uri.fsPath, fullPath);
+  const workspaceFolderPath = getWorkspaceFolderPath();
+  if (!isUndefined(workspaceFolderPath)) {
+    relativePath = path.relative(workspaceFolderPath, fullPath);
     projectRelativePathSlash = path.relative(
-      path.dirname(workspaceFolder.uri.fsPath),
+      path.dirname(workspaceFolderPath),
       fullPath
     ).replaceAll('\\', '/');
   }
@@ -54,28 +59,25 @@ const filePathInfo = (filePath) => {
 };
 
 const projectRootName = () => {
-  const workspaceFolders = vscode.workspace.workspaceFolders;
-  if (workspaceFolders && workspaceFolders.length > 0) {
-    const workspaceFolder = workspaceFolders[0];
-    return path.basename(workspaceFolder.uri.fsPath);
+  const workspaceFolderPath = getWorkspaceFolderPath();
+  if (!isUndefined(workspaceFolderPath)) {
+    return path.basename(workspaceFolderPath);
   }
   return '';
 }
 
 const projectFolderNameRootName = () => {
-  const workspaceFolders = vscode.workspace.workspaceFolders;
-  if (workspaceFolders && workspaceFolders.length > 0) {
-    const workspaceFolder = workspaceFolders[0];
-    return path.basename(path.dirname(workspaceFolder.uri.fsPath)) + '/' + path.basename(workspaceFolder.uri.fsPath);
+  const workspaceFolderPath = getWorkspaceFolderPath();
+  if (workspaceFolderPath) {
+    return path.basename(path.dirname(workspaceFolderPath)) + '/' + path.basename(workspaceFolderPath);
   }
   return '';
 }
 
 const projectRootFullPath = () => {
-  const workspaceFolders = vscode.workspace.workspaceFolders;
-  if (workspaceFolders && workspaceFolders.length > 0) {
-    const workspaceFolder = workspaceFolders[0];
-    return driveLetterUpper(workspaceFolder.uri.fsPath);
+  const workspaceFolderPath = getWorkspaceFolderPath();
+  if (workspaceFolderPath) {
+    return driveLetterUpper(workspaceFolderPath);
   }
   return '';
 }
@@ -189,7 +191,7 @@ function activate(context) {
         label: `${groupName} : Copy file name without extension`,
         func: () => { copyTabsGroupsFilePath(tabsGroups, 'fileNameWithoutExt') }
       });
-      if (hasWorkspaceFolder()) {
+      if (!isUndefined(getWorkspaceFolderPath())) {
         options.push({
           label: `${groupName} : Copy relative path`,
           func: () => { copyTabsGroupsFilePath(tabsGroups, 'relativePath') }
@@ -214,12 +216,24 @@ function activate(context) {
       ...createSubOptions([tabsToRight], 'Tabs to Right'),
       { label: 'All Tabs in All Groups', kind: vscode.QuickPickItemKind.Separator },
       ...createSubOptions(allTabsAllGroups, 'All Tabs'),
-      { label: 'Project', kind: vscode.QuickPickItemKind.Separator },
-      { label: 'Project : Copy project root name', func: () => { copyProjectRootName() }},
-      { label: 'Project : Copy project folder name and root name', func: () => { copyProjectFolderNameRootName() }},
-      { label: 'Project : Copy project root full path', func: () => { copyProjectRootFullPath() }}
     ];
-
+    if (!isUndefined(getWorkspaceFolderPath())) {
+      options.push({
+        label: 'Project', kind: vscode.QuickPickItemKind.Separator
+      });
+      options.push({
+        label: 'Project : Copy project root name',
+        func: () => { copyProjectRootName() }
+      });
+      options.push({
+        label: 'Project : Copy project folder name and root name',
+        func: () => { copyProjectFolderNameRootName() }
+      });
+      options.push({
+        label: 'Project : Copy project root full path',
+        func: () => { copyProjectRootFullPath() }
+      });
+    }
     commandQuickPick(options, 'Select what to copy');
   });
 
@@ -240,7 +254,7 @@ function activate(context) {
       label: 'Copy file name without extension',
       func: () => { copySelectedFilesInfo(selectedPaths, 'fileNameWithoutExt') }
     });
-    if (hasWorkspaceFolder()) {
+    if (!isUndefined(getWorkspaceFolderPath())) {
       options.push({
         label: 'Copy relative path',
         func: () => { copySelectedFilesInfo(selectedPaths, 'relativePath') }
