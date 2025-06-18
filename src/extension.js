@@ -13,54 +13,45 @@ const driveLetterUpper = path => {
   return path;
 };
 
-const tabFilePath = (tab) => {
-  const path = tab.input?.uri?.fsPath ?? '';
-  return driveLetterUpper(path);
-}
+const hasWorkspaceFolder = () => {
+  const workspaceFolders = vscode.workspace.workspaceFolders;
+  return workspaceFolders && workspaceFolders.length > 0;
+};
 
-const tabRelativePath = (tab) => {
-  const filePath = tabFilePath(tab);
+const filePathInfo = (filePath) => {
+  if (!filePath) {
+    return {
+      fullPath: undefined,
+      fileName: undefined,
+      fileNameWithoutExt: undefined,
+      relativePath: undefined,
+      projectRelativePathSlash: undefined
+    };
+  }
+  const fullPath = driveLetterUpper(filePath);
+  const fileName = path.basename(fullPath);
+  const fileNameWithoutExt = path.basename(fullPath, path.extname(fullPath));
 
-  const editor = vscode.window.activeTextEditor;
-  const workspaceFolder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
-  const filePathRelative =
-    workspaceFolder
-      ? path.relative(
-        workspaceFolder.uri.fsPath,
-        filePath
-      )
-      : filePath;
+  const workspaceFolders = vscode.workspace.workspaceFolders;
+  let relativePath = undefined;
+  let projectRelativePathSlash = undefined;
 
-  return filePathRelative;
-}
-
-const tabProjectRelativePathSlash = (tab) => {
-  const filePath = tabFilePath(tab);
-
-  const editor = vscode.window.activeTextEditor;
-  const workspaceFolder = vscode.workspace.getWorkspaceFolder(editor.document.uri);
-  const filePathRelativeProject =
-    workspaceFolder
-      ? path.relative(
-        path.dirname(workspaceFolder.uri.fsPath),
-        filePath
-      )
-      : filePath;
-
-  return filePathRelativeProject.replaceAll(`\\`, `/`);
-}
-
-const tabFileName = (tab) => {
-  const filePath = tabFilePath(tab);
-  const fileName = path.basename(filePath);
-  return fileName ?? '';
-}
-
-const tabFileNameWithoutExt = (tab) => {
-  const filePath = tabFilePath(tab);
-  const fileName = path.basename(filePath, path.extname(filePath));
-  return fileName ?? '';
-}
+  if (hasWorkspaceFolder()) {
+    const workspaceFolder = workspaceFolders[0];
+    relativePath = path.relative(workspaceFolder.uri.fsPath, fullPath);
+    projectRelativePathSlash = path.relative(
+      path.dirname(workspaceFolder.uri.fsPath),
+      fullPath
+    ).replaceAll('\\', '/');
+  }
+  return {
+    fullPath,
+    fileName,
+    fileNameWithoutExt,
+    relativePath,
+    projectRelativePathSlash
+  };
+};
 
 const projectRootName = () => {
   const workspaceFolders = vscode.workspace.workspaceFolders;
@@ -102,7 +93,7 @@ const copyAndMessage = (text, successMessage, warningMessage) => {
   }
 }
 
-const copyPathsGroups = (pathsGroups, pathTypeText) => {
+const copyPathsGroupsAndMessage = (pathsGroups, pathTypeText) => {
   const result = pathsGroups.map(paths => paths.join('\n')).join('\n\n');
   const pathCount = pathsGroups.flat().length;
 
@@ -111,79 +102,18 @@ const copyPathsGroups = (pathsGroups, pathTypeText) => {
     `No ${pathTypeText} to copy.`);
 }
 
-const copyFileName = (tabsGroups) => {
+const copyTabsGroupsFilePath = (tabsGroups, filePathType) => {
   const pathsGroups = [];
   for (const tabs of tabsGroups) {
     const paths = [];
     for (const tab of tabs) {
-      const path = tabFileName(tab);
-      if (path !== '') {
-        paths.push(path);
-      }
+      const path = filePathInfo(tab.input?.uri?.fsPath)[filePathType];
+      if (path === undefined) { continue; }
+      paths.push(path);
     }
     pathsGroups.push(paths);
   }
-  copyPathsGroups(pathsGroups, 'file name');
-}
-
-const copyFileNameWithoutExt = (tabsGroups) => {
-  const pathsGroups = [];
-  for (const tabs of tabsGroups) {
-    const paths = [];
-    for (const tab of tabs) {
-      const path = tabFileNameWithoutExt(tab);
-      if (path !== '') {
-        paths.push(path);
-      }
-    }
-    pathsGroups.push(paths);
-  }
-  copyPathsGroups(pathsGroups, 'file name');
-}
-
-const copyRelativePath = (tabsGroups) => {
-  const pathsGroups = [];
-  for (const tabs of tabsGroups) {
-    const paths = [];
-    for (const tab of tabs) {
-      const path = tabRelativePath(tab);
-      if (path !== '') {
-        paths.push(path);
-      }
-    }
-    pathsGroups.push(paths);
-  }
-  copyPathsGroups(pathsGroups, 'relative path');
-}
-
-const copyProjectRelativePath = (tabsGroups) => {
-  const pathsGroups = [];
-  for (const tabs of tabsGroups) {
-    const paths = [];
-    for (const tab of tabs) {
-      const path = tabProjectRelativePathSlash(tab);
-      if (path !== '') {
-        paths.push(path);
-      }
-    }
-    pathsGroups.push(paths);
-  }
-  copyPathsGroups(pathsGroups, 'project relative path');
-}
-
-const copyFullPath = (tabsGroups) => {
-  const pathsGroups = [];
-  for (const tabs of tabsGroups) {
-    const paths = [];
-    for (const tab of tabs) {
-      const path = tabFilePath(tab);
-      if (path !== '') {
-        paths.push(path);
-      }
-    }
-    pathsGroups.push(paths);
-  }
-  copyPathsGroups(pathsGroups, 'file path');
+  copyPathsGroupsAndMessage(pathsGroups, filePathType);
 }
 
 const copyProjectRootName = () => {
@@ -209,35 +139,8 @@ const copyProjectFolderNameRootName = () => {
     'No project folder found.');
 }
 
-// Explorer context functions
-const filePathInfo = (filePath) => {
-  const fullPath = driveLetterUpper(filePath);
-  const fileName = path.basename(fullPath);
-  const fileNameWithoutExt = path.basename(fullPath, path.extname(fullPath));
 
-  const workspaceFolders = vscode.workspace.workspaceFolders;
-  let relativePath = fullPath;
-  let projectRelativePath = fullPath;
-
-  if (workspaceFolders && workspaceFolders.length > 0) {
-    const workspaceFolder = workspaceFolders[0];
-    relativePath = path.relative(workspaceFolder.uri.fsPath, fullPath);
-    projectRelativePath = path.relative(
-      path.dirname(workspaceFolder.uri.fsPath),
-      fullPath
-    ).replaceAll('\\', '/');
-  }
-
-  return {
-    fullPath,
-    fileName,
-    fileNameWithoutExt,
-    relativePath,
-    projectRelativePath
-  };
-};
-
-const copySelectedFilesInfo = (uris, infoType) => {
+const copySelectedFilesInfo = (uris, filePathType) => {
   if (!uris || uris.length === 0) {
     vscode.window.showWarningMessage('No files selected.');
     return;
@@ -246,7 +149,7 @@ const copySelectedFilesInfo = (uris, infoType) => {
   const paths = [];
   for (const uri of uris) {
     const fileInfo = filePathInfo(uri.fsPath);
-    const pathValue = fileInfo[infoType];
+    const pathValue = fileInfo[filePathType];
     if (pathValue !== '') {
       paths.push(pathValue);
     }
@@ -257,11 +160,11 @@ const copySelectedFilesInfo = (uris, infoType) => {
 
   if (result !== '') {
     vscode.env.clipboard.writeText(result);
-    const typeLabel = infoType === 'fullPath' ? 'file path' :
-                     infoType === 'fileName' ? 'file name' :
-                     infoType === 'fileNameWithoutExt' ? 'file name' :
-                     infoType === 'relativePath' ? 'relative path' :
-                     infoType === 'projectRelativePath' ? 'project relative path' : 'file info';
+    const typeLabel = filePathType === 'fullPath' ? 'file path' :
+                     filePathType === 'fileName' ? 'file name' :
+                     filePathType === 'fileNameWithoutExt' ? 'file name' :
+                     filePathType === 'relativePath' ? 'relative path' :
+                     filePathType === 'projectRelativePathSlash' ? 'project relative path' : 'file info';
     vscode.window.showInformationMessage(`Copied: ${typeLabel}${pathCount > 1 ? 's' : ''}: ${pathCount}`);
   } else {
     vscode.window.showWarningMessage('No file paths to copy.');
@@ -278,11 +181,28 @@ function activate(context) {
 
     const createSubOptions = (tabsGroups, groupName) => {
       const options = [];
-        options.push({ label: `${groupName} : Copy file name`, func: () => { copyFileName(tabsGroups) } });
-        options.push({ label: `${groupName} : Copy file name without extension`, func: () => { copyFileNameWithoutExt(tabsGroups) } });
-        options.push({ label: `${groupName} : Copy relative path`, func: () => { copyRelativePath(tabsGroups) } });
-        options.push({ label: `${groupName} : Copy relative path slash with project root`, func: () => { copyProjectRelativePath(tabsGroups) } });
-        options.push({ label: `${groupName} : Copy file full path`, func: () => { copyFullPath(tabsGroups) } });
+      options.push({
+        label: `${groupName} : Copy file name`,
+        func: () => { copyTabsGroupsFilePath(tabsGroups, 'fileName') }
+      });
+      options.push({
+        label: `${groupName} : Copy file name without extension`,
+        func: () => { copyTabsGroupsFilePath(tabsGroups, 'fileNameWithoutExt') }
+      });
+      if (hasWorkspaceFolder()) {
+        options.push({
+          label: `${groupName} : Copy relative path`,
+          func: () => { copyTabsGroupsFilePath(tabsGroups, 'relativePath') }
+        });
+        options.push({
+          label: `${groupName} : Copy relative path slash with project root`,
+          func: () => { copyTabsGroupsFilePath(tabsGroups, 'projectRelativePathSlash') }
+        });
+      }
+      options.push({
+        label: `${groupName} : Copy file full path`,
+        func: () => { copyTabsGroupsFilePath(tabsGroups, 'fullPath') }
+      });
 
       return options;
     }
@@ -311,13 +231,29 @@ function activate(context) {
       return;
     }
 
-    const options = [
-      { label: 'Copy file name', func: () => { copySelectedFilesInfo(selectedPaths, 'fileName') } },
-      { label: 'Copy file name without extension', func: () => { copySelectedFilesInfo(selectedPaths, 'fileNameWithoutExt') } },
-      { label: 'Copy relative path', func: () => { copySelectedFilesInfo(selectedPaths, 'relativePath') } },
-      { label: 'Copy relative path slash with project root', func: () => { copySelectedFilesInfo(selectedPaths, 'projectRelativePath') } },
-      { label: 'Copy file full path', func: () => { copySelectedFilesInfo(selectedPaths, 'fullPath') } }
-    ];
+    const options = [];
+    options.push({
+      label: 'Copy file name',
+      func: () => { copySelectedFilesInfo(selectedPaths, 'fileName') }
+    });
+    options.push({
+      label: 'Copy file name without extension',
+      func: () => { copySelectedFilesInfo(selectedPaths, 'fileNameWithoutExt') }
+    });
+    if (hasWorkspaceFolder()) {
+      options.push({
+        label: 'Copy relative path',
+        func: () => { copySelectedFilesInfo(selectedPaths, 'relativePath') }
+      });
+      options.push({
+        label: 'Copy relative path slash with project root',
+        func: () => { copySelectedFilesInfo(selectedPaths, 'projectRelativePathSlash') }
+      });
+    }
+    options.push({
+      label: 'Copy file full path',
+      func: () => { copySelectedFilesInfo(selectedPaths, 'fullPath') }
+    });
 
     commandQuickPick(options, `Select copy format for ${selectedPaths.length} file${selectedPaths.length > 1 ? 's' : ''}`);
   });
