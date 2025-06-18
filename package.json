@@ -42,27 +42,35 @@
   "contributes": {
     "commands": [
       {
-        "command": "vscode-copy-tabs-filepath.copyTabsFilePath",
+        "command": "vscode-copy-tabs-filepath.editorTitleContextMenu",
         "title": "Copy Tabs FilePath"
       },
       {
-        "command": "vscode-copy-tabs-filepath.copySelectedFilesPath",
-        "title": "Copy Tabs FilePath"
+        "command": "vscode-copy-tabs-filepath.explorerContextMenu",
+        "title": "Copy Tabs FilePath : explorer",
+        "when": "false"
       }
     ],
     "menus": {
+      "commandPalette": [
+        {
+          "COMMENT": "This command should only be shown in context menus",
+          "command": "vscode-copy-tabs-filepath.explorerContextMenu",
+          "when": "false"
+        }
+      ],
       "editor/title/context": [
         {
-          "command": "vscode-copy-tabs-filepath.copyTabsFilePath",
+          "command": "vscode-copy-tabs-filepath.editorTitleContextMenu",
           "when": "resourceLangId != ''",
-          "group": "1_copy@999"
+          "group": "1_cutcopypaste@100"
         }
       ],
       "explorer/context": [
         {
-          "command": "vscode-copy-tabs-filepath.copySelectedFilesPath",
+          "command": "vscode-copy-tabs-filepath.explorerContextMenu",
           "when": "explorerResourceIsFolder == false",
-          "group": "1_copy@999"
+          "group": "6_copypath@100"
         }
       ]
     }
