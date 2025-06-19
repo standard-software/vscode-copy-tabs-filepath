@@ -19,10 +19,10 @@ This extension allows you to copy the file paths or file names of the active tab
   - relative path including project root name
   - full path
 
-![](https://raw.githubusercontent.com/standard-software/vscode-copy-tabs-filepath/README_IMG/README_01.png)
-![](https://raw.githubusercontent.com/standard-software/vscode-copy-tabs-filepath/README_IMG/README_02.png)
-![](https://raw.githubusercontent.com/standard-software/vscode-copy-tabs-filepath/README_IMG/README_03.png)
-![](https://raw.githubusercontent.com/standard-software/vscode-copy-tabs-filepath/README_IMG/README_04.png)
+![](https://raw.githubusercontent.com/standard-software/vscode-copy-tabs-filepath/main/README_IMG/README_01.png)
+![](https://raw.githubusercontent.com/standard-software/vscode-copy-tabs-filepath/main/README_IMG/README_02.png)
+![](https://raw.githubusercontent.com/standard-software/vscode-copy-tabs-filepath/main/README_IMG/README_03.png)
+![](https://raw.githubusercontent.com/standard-software/vscode-copy-tabs-filepath/main/README_IMG/README_04.png)
 
 ## Installation
 

@@ -8,6 +8,7 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ### Changed
 - Improved context menu positioning with separator lines
+- add README SCREENSHOT
 
 ## [1.1.0] - 2025-06-18 Wed
 
