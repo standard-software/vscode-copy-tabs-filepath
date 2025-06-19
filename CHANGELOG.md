@@ -4,6 +4,11 @@ All notable changes to the "vscode-copy-tabs-filepath" extension will be documen
 
 Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
 
+## [1.2.0] - 2025-06-19
+
+### Changed
+- Improved context menu positioning with separator lines
+
 ## [1.1.0] - 2025-06-18 Wed
 
 ### Added

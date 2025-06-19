@@ -47,8 +47,7 @@
       },
       {
         "command": "vscode-copy-tabs-filepath.explorerContextMenu",
-        "title": "Copy Tabs FilePath : explorer",
-        "when": "false"
+        "title": "Copy Tabs FilePath : explorer"
       }
     ],
     "menus": {
@@ -63,14 +62,14 @@
         {
           "command": "vscode-copy-tabs-filepath.editorTitleContextMenu",
           "when": "resourceLangId != ''",
-          "group": "1_cutcopypaste@100"
+          "group": "1_cutcopypaste2@1"
         }
       ],
       "explorer/context": [
         {
           "command": "vscode-copy-tabs-filepath.explorerContextMenu",
           "when": "explorerResourceIsFolder == false",
-          "group": "6_copypath@100"
+          "group": "6_copypath2@1"
         }
       ]
     }
