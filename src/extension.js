@@ -131,7 +131,10 @@ const copyTabsGroupsFilePath = (tabsGroups, filePathType) => {
   for (const tabs of tabsGroups) {
     const paths = [];
     for (const tab of tabs) {
-      const path = filePathInfo(tab.input?.uri?.fsPath)[filePathType];
+      if (isUndefined(tab.input)) { continue; }
+      const path = filePathInfo(
+        tab.input.uri?.fsPath ?? tab.input.modified?.fsPath
+      )[filePathType];
       if (isUndefined(path)) { continue; }
       paths.push(path);
     }

@@ -2,7 +2,10 @@
 
 All notable changes to the "vscode-copy-tabs-filepath" extension will be documented in this file.
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+## [1.3.0] - 2025-06-23 Mon
+
+### Changed
+- support Working Tree Relative Folder Path
 
 ## [1.2.0] - 2025-06-19
 
