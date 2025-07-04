@@ -50,8 +50,20 @@
         "title": "Copy Tabs FilePath : more"
       },
       {
+        "command": "vscode-copy-tabs-filepath.editorTabContextMenuActiveTabFileName",
+        "title": "Copy Tabs FilePath : Active Tab FileName"
+      },
+      {
+        "command": "vscode-copy-tabs-filepath.editorTabContextMenuRightTabsFileName",
+        "title": "Copy Tabs FilePath : Right Tabs FileName"
+      },
+      {
+        "command": "vscode-copy-tabs-filepath.editorTabContextMenuLeftTabsFileName",
+        "title": "Copy Tabs FilePath : Left Tabs FileName"
+      },
+      {
         "command": "vscode-copy-tabs-filepath.explorerContextMenu",
-        "title": "Copy Tabs FilePath : explorer"
+        "title": "Copy Tabs FilePath : Explorer"
       }
     ],
     "menus": {
@@ -59,6 +71,21 @@
         {
           "COMMENT": "This command should only be shown in context menus",
           "command": "vscode-copy-tabs-filepath.editorTabContextMenuMore",
+          "when": "false"
+        },
+        {
+          "COMMENT": "This command should only be shown in context menus",
+          "command": "vscode-copy-tabs-filepath.editorTabContextMenuActiveTabFileName",
+          "when": "false"
+        },
+        {
+          "COMMENT": "This command should only be shown in context menus",
+          "command": "vscode-copy-tabs-filepath.editorTabContextMenuRightTabsFileName",
+          "when": "false"
+        },
+        {
+          "COMMENT": "This command should only be shown in context menus",
+          "command": "vscode-copy-tabs-filepath.editorTabContextMenuLeftTabsFileName",
           "when": "false"
         },
         {
@@ -72,6 +99,21 @@
           "command": "vscode-copy-tabs-filepath.editorTabContextMenuMore",
           "when": "resourceLangId != ''",
           "group": "1_cutcopypaste2@1"
+        },
+        {
+          "command": "vscode-copy-tabs-filepath.editorTabContextMenuActiveTabFileName",
+          "when": "resourceLangId != ''",
+          "group": "1_cutcopypaste2@2"
+        },
+        {
+          "command": "vscode-copy-tabs-filepath.editorTabContextMenuRightTabsFileName",
+          "when": "resourceLangId != ''",
+          "group": "1_cutcopypaste2@3"
+        },
+        {
+          "command": "vscode-copy-tabs-filepath.editorTabContextMenuLeftTabsFileName",
+          "when": "resourceLangId != ''",
+          "group": "1_cutcopypaste2@4"
         }
       ],
       "explorer/context": [

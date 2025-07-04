@@ -86,6 +86,10 @@ const getTabsToRight =(tabs, activeIndex) => {
   return tabs.slice(activeIndex);
 }
 
+const getTabsToLeft = (tabs, activeIndex) => {
+  return tabs.slice(0, activeIndex + 1);
+}
+
 const copyAndMessage = (text, successMessage, warningMessage) => {
   if (text !== '') {
     vscode.env.clipboard.writeText(text);
@@ -275,6 +279,51 @@ function activate(context) {
 
   registerCommand(context, 'vscode-copy-tabs-filepath.editorTabContextMenuMore',
     copyTabsFilePathMainCommand
+  );
+
+  registerCommand(context, 'vscode-copy-tabs-filepath.editorTabContextMenuActiveTabFileName',
+    async () => {
+      const activeGroup = vscode.window.tabGroups.activeTabGroup;
+      if (!activeGroup || !activeGroup.activeTab) {
+        vscode.window.showWarningMessage('No active tab found.');
+        return;
+      }
+      copyTabsGroupsFilePath([[activeGroup.activeTab]], 'fileName');
+    }
+  );
+
+  registerCommand(context, 'vscode-copy-tabs-filepath.editorTabContextMenuRightTabsFileName',
+    async () => {
+      const activeGroup = vscode.window.tabGroups.activeTabGroup;
+      if (!activeGroup || !activeGroup.tabs || activeGroup.tabs.length === 0) {
+        vscode.window.showWarningMessage('No active tab group or tabs found.');
+        return;
+      }
+      const activeIndex = activeGroup.tabs.findIndex(tab => tab.isActive);
+      const tabsToRight = getTabsToRight(activeGroup.tabs, activeIndex);
+      if (tabsToRight.length === 0) {
+        vscode.window.showWarningMessage('No tabs to the right of active tab.');
+        return;
+      }
+      copyTabsGroupsFilePath([tabsToRight], 'fileName');
+    }
+  );
+
+  registerCommand(context, 'vscode-copy-tabs-filepath.editorTabContextMenuLeftTabsFileName',
+    async () => {
+      const activeGroup = vscode.window.tabGroups.activeTabGroup;
+      if (!activeGroup || !activeGroup.tabs || activeGroup.tabs.length === 0) {
+        vscode.window.showWarningMessage('No active tab group or tabs found.');
+        return;
+      }
+      const activeIndex = activeGroup.tabs.findIndex(tab => tab.isActive);
+      const tabsToLeft = getTabsToLeft(activeGroup.tabs, activeIndex);
+      if (tabsToLeft.length === 0) {
+        vscode.window.showWarningMessage('No tabs to the left of active tab.');
+        return;
+      }
+      copyTabsGroupsFilePath([tabsToLeft], 'fileName');
+    }
   );
 
   registerCommand(context, 'vscode-copy-tabs-filepath.explorerContextMenu',
