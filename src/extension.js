@@ -193,7 +193,7 @@ const copyExplorerFilePath = (filePaths, filePathType) => {
 };
 
 function activate(context) {
-  registerCommand(context, 'vscode-copy-tabs-filepath.editorTitleContextMenu',
+  const copyTabsFilePathMainCommand =
     async () => {
       const activeGroup = vscode.window.tabGroups.activeTabGroup;
 
@@ -268,6 +268,13 @@ function activate(context) {
         `Select copy type and format`
       );
     }
+
+  registerCommand(context, 'vscode-copy-tabs-filepath.commandPalette',
+    copyTabsFilePathMainCommand
+  );
+
+  registerCommand(context, 'vscode-copy-tabs-filepath.editorTabContextMenuMore',
+    copyTabsFilePathMainCommand
   );
 
   registerCommand(context, 'vscode-copy-tabs-filepath.explorerContextMenu',

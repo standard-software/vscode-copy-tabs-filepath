@@ -2,26 +2,35 @@
 
 All notable changes to the "vscode-copy-tabs-filepath" extension will be documented in this file.
 
+## [1.4.0] - 2025-07-05 Sat
+
+- Command placement and organization
+
 ## [1.3.0] - 2025-06-23 Mon
 
 ### Changed
+
 - support Working Tree Relative Folder Path
 
 ## [1.2.0] - 2025-06-19
 
 ### Changed
+
 - Improved context menu positioning with separator lines
 - add README SCREENSHOT
 
 ## [1.1.0] - 2025-06-18 Wed
 
 ### Added
+
 - Active Tab context menu
+
   - Project root name copy
   - Project folder name and root name copy
   - Project root full path copy
 
 - exploer view context menu
+
   - File name only
   - File name without extension
   - Relative path from workspace root
@@ -37,6 +46,7 @@ All notable changes to the "vscode-copy-tabs-filepath" extension will be documen
 ## [1.0.0] - 2025-06-17
 
 ### Added
+
 - Initial release of Copy Tabs FilePath extension
 - Command palette integration with `Copy Tabs FilePath` command
 - Tab context menu integration for easy access
