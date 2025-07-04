@@ -97,18 +97,18 @@ const copyAndMessage = (text, successMessage, warningMessage) => {
 
 const filePathTypeToText = (filePathType, s) => {
   switch (filePathType) {
-    case 'fullPath':
-      return `full path${s}`;
-    case 'fileName':
-      return `file name${s}`;
-    case 'fileNameWithoutExt':
-      return `file name${s} without extension`;
-    case 'relativePath':
-      return `relative path${s}`;
-    case 'projectRelativePathSlash':
-      return `project relative path${s} slash`;
-    default:
-      throw new Error('Unknown file path type: ' + filePathType);
+  case 'fullPath':
+    return `full path${s}`;
+  case 'fileName':
+    return `file name${s}`;
+  case 'fileNameWithoutExt':
+    return `file name${s} without extension`;
+  case 'relativePath':
+    return `relative path${s}`;
+  case 'projectRelativePathSlash':
+    return `project relative path${s} slash`;
+  default:
+    throw new Error('Unknown file path type: ' + filePathType);
   }
 };
 
@@ -175,7 +175,7 @@ const copyExplorerFilePath = (filePaths, filePathType) => {
 
   const paths = [];
   for (const filePath of filePaths) {
-      const path = filePathInfo(filePath)[filePathType];
+    const path = filePathInfo(filePath)[filePathType];
     if (isUndefined(path)) { continue; }
     paths.push(path);
   }
@@ -274,7 +274,7 @@ function activate(context) {
     async (uri, allUris) => {
       const uris =
         (allUris && allUris.length > 0)
-        ? allUris : [uri];
+          ? allUris : [uri];
 
       if (!uris || uris.length === 0) {
         vscode.window.showWarningMessage('No files selected.');

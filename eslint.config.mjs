@@ -14,6 +14,7 @@ export default [{
     },
 
     rules: {
+        "indent": ["error", 2],
         "no-const-assign": "warn",
         "no-this-before-super": "warn",
         "no-undef": "warn",
