@@ -210,6 +210,8 @@ function activate(context) {
 
       const tabsToRight = getTabsToRight(activeGroup.tabs, activeIndex);
       const tabsRightText = `${tabsToRight.length} Tab${tabsToRight.length > 1 ? 's' : ''}`;
+      const tabsToLeft = getTabsToLeft(activeGroup.tabs, activeIndex);
+      const tabsLeftText = `${tabsToLeft.length} Tab${tabsToLeft.length > 1 ? 's' : ''}`;
       const allTabsAllGroups = vscode.window.tabGroups.all.map(group => group.tabs);
       const allTabsCount = allTabsAllGroups.flat().length;
       const tabsAllText = `${allTabsCount} Tab${allTabsCount > 1 ? 's' : ''}`;
@@ -245,8 +247,10 @@ function activate(context) {
       const options = [
         { label: 'Active Tab', kind: vscode.QuickPickItemKind.Separator },
         ...createSubOptions([[activeGroup.activeTab]], 'Active Tab'),
-        { label: `Tabs to Right of Active Tab : ${tabsRightText}`, kind: vscode.QuickPickItemKind.Separator },
-        ...createSubOptions([tabsToRight], 'Tabs to Right'),
+        { label: `Right Tabs : ${tabsRightText}`, kind: vscode.QuickPickItemKind.Separator },
+        ...createSubOptions([tabsToRight], 'Right Tabs'),
+        { label: `Left Tabs : ${tabsLeftText}`, kind: vscode.QuickPickItemKind.Separator },
+        ...createSubOptions([tabsToLeft], 'Left Tabs'),
         { label: `All Tabs in All Groups : ${tabsAllText}`, kind: vscode.QuickPickItemKind.Separator },
         ...createSubOptions(allTabsAllGroups, 'All Tabs'),
       ];
