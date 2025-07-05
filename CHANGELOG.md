@@ -7,6 +7,7 @@ All notable changes to the "vscode-copy-tabs-filepath" extension will be documen
 - Command placement and organization
 - Added ActiveTab, RightTabs, LeftTabs filename copy functions to editor tab context menu
 - Added LeftTabs to commands in command palette
+- Update README.md
 
 ## [1.3.0] - 2025-06-23 Mon
 
