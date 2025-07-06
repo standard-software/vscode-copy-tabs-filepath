@@ -2,11 +2,11 @@
   "name": "vscode-copy-tabs-filepath",
   "displayName": "Copy Tabs FilePath",
   "description": "",
-  "version": "1.4.0",
+  "version": "1.4.1",
   "scripts": {
     "lint": "eslint",
     "lintfix": "eslint --fix",
-    "pack": "npx -y vsce package && code --install-extension vscode-copy-tabs-filepath-1.4.0.vsix",
+    "pack": "npx -y vsce package && code --install-extension vscode-copy-tabs-filepath-1.4.1.vsix",
     "": ""
   },
   "icon": "vscode-copy-tabs-filepath_icon.png",
