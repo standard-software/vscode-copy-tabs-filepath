@@ -21,7 +21,8 @@ This extension allows you to copy the file paths or file names of the active tab
 ## Screenshots
 
 - Context menu for active tab
-  ![](https://raw.githubusercontent.com/standard-software/vscode-copy-tabs-filepath/main/README_IMG/README_01.png)
+
+![](https://raw.githubusercontent.com/standard-software/vscode-copy-tabs-filepath/main/README_IMG/README_01.png)
 
 ---
 

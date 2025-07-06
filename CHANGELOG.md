@@ -2,6 +2,10 @@
 
 All notable changes to the "vscode-copy-tabs-filepath" extension will be documented in this file.
 
+## [1.4.1] - 2025-07-06 Sun
+
+- Update README.md
+
 ## [1.4.0] - 2025-07-05 Sat
 
 - Command placement and organization
